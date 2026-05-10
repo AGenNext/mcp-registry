@@ -1,0 +1,99 @@
+{
+  "id": "metamcp",
+  "name": "MetaMCP",
+  "slug": "metamcp",
+  "description": "MCP Aggregator, Orchestrator, Middleware, and Gateway in a single Docker container. MetaMCP lets you dynamically aggregate multiple MCP servers into a unified endpoint, apply middleware (auth, rate limiting, tool overrides), and expose them over SSE or Streamable HTTP transports with API-key or OAuth authentication. Acts as the control plane and lifecycle manager for all MCPs in the registry.",
+  "version": "2.4.22",
+  "category": "infrastructure",
+  "tags": [
+    "aggregator",
+    "gateway",
+    "orchestrator",
+    "middleware",
+    "proxy",
+    "registry-manager",
+    "multi-tenant",
+    "auth",
+    "rate-limiting",
+    "sse",
+    "streamable-http",
+    "openapi"
+  ],
+  "role": "mcp-manager",
+  "manages": "all",
+  "source": {
+    "type": "github",
+    "url": "https://github.com/metatool-ai/metamcp",
+    "license": "MIT"
+  },
+  "docker": {
+    "image": "ghcr.io/metatool-ai/metamcp",
+    "tag": "latest",
+    "compose_file": "docker-compose.yml",
+    "ports": {
+      "ui": 12005,
+      "mcp_endpoint": 12008
+    }
+  },
+  "deployment": {
+    "type": "self-hosted",
+    "min_memory_gb": 2,
+    "recommended_memory_gb": 4,
+    "requires": ["docker", "docker-compose", "postgresql"]
+  },
+  "authentication": {
+    "internal": "better-auth",
+    "external": [
+      "api-key",
+      "oauth-mcp-spec-2025-06-18",
+      "oidc"
+    ],
+    "oidc_providers": [
+      "Auth0",
+      "Keycloak",
+      "Azure AD",
+      "Google",
+      "Okta"
+    ],
+    "multi_tenancy": true
+  },
+  "transports": ["sse", "streamable-http", "openapi"],
+  "features": {
+    "namespace_grouping": true,
+    "tool_enable_disable": true,
+    "tool_overrides": true,
+    "middleware": true,
+    "rate_limiting": true,
+    "mcp_inspector": true,
+    "version_management": true,
+    "registry_integration": true
+  },
+  "registry_integration": {
+    "description": "MetaMCP serves as the runtime manager for all servers listed in the AGenNext/mcp-registry. It ingests server definitions from registry-entry.json files, manages their lifecycle (start/stop/restart), tracks versions, handles authentication tokens per server, and exposes aggregated endpoints.",
+    "registry_source": "https://github.com/AGenNext/mcp-registry",
+    "managed_servers": "all",
+    "version_tracking": true,
+    "auth_per_server": true,
+    "new_listing_workflow": "Add registry-entry.json to a new folder in mcp-registry → MetaMCP auto-discovers and offers to register"
+  },
+  "quick_start": {
+    "docker_compose": [
+      "git clone https://github.com/metatool-ai/metamcp.git",
+      "cd metamcp",
+      "cp example.env .env",
+      "docker compose up -d"
+    ],
+    "access": {
+      "ui": "http://localhost:12005",
+      "mcp_endpoint": "http://localhost:12008/metamcp/<ENDPOINT_NAME>/sse"
+    }
+  },
+  "compatibility": {
+    "mcp_protocol": ["tools", "resources", "prompts", "oauth-03-26"],
+    "clients": ["claude-desktop", "cursor", "open-webui", "any-mcp-client"]
+  },
+  "docs": "https://docs.metamcp.com",
+  "added_date": "2026-05-09",
+  "maintained_by": "metatool-ai",
+  "registry_role_notes": "MetaMCP is designated as the **MCP Manager** for the AGenNext/mcp-registry. It provides: (1) centralized version management for all 58+ registry servers, (2) per-server authentication and secrets management, (3) new MCP listing workflow via namespace/endpoint onboarding, (4) middleware layer for all registry traffic, (5) rate limiting and traffic management across servers."
+}
