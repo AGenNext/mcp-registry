@@ -2,7 +2,7 @@
   "name": "mcp-registry",
   "version": "1.0.0",
   "private": true,
-  "description": "The Tools Registry for MCP-compatible AI agents.",
+  "description": "The Tool Catalog for MCP-compatible AI agents.",
   "packageManager": "npm@10.9.0",
   "workspaces": [
     "packages/*"
