@@ -1,4 +1,4 @@
-name: Deploy Static Site to GitHub Pages
+name: Deploy MCP Registry Website to GitHub Pages
 
 on:
   push:
@@ -12,8 +12,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -21,14 +21,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Pages
-        uses: actions/configure-pages@v4
-      
-      - name: Upload artifact
+        uses: actions/configure-pages@v5
+
+      - name: Build static site
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp index.html _site/index.html
+          touch _site/.nojekyll
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: index.html
-      
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
