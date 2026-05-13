@@ -1,32 +1,32 @@
 # MCP Registry
 
-**The Skill Registry for MCP-compatible AI agents.**
+**The Tools Registry for MCP-compatible AI agents.**
 
-MCP Registry is an open catalog of reusable skills that agents can discover, deploy, and compose through the Model Context Protocol. Each skill packages a focused capability, MCP tools, deployment metadata, and runtime instructions.
+MCP Registry is an open catalog of reusable MCP tools that agents can discover, deploy, and compose through the Model Context Protocol. Each tool package includes focused capabilities, MCP tool definitions, deployment metadata, and runtime instructions.
 
 ---
 
-## Why Skill Registry?
+## Why Tools Registry?
 
-Traditional MCP projects describe integrations as servers. MCP Registry organizes them as reusable **skills**:
+Traditional MCP projects describe integrations as servers. MCP Registry organizes them as reusable **tools**:
 
-| Traditional MCP View | Skill Registry View |
+| Traditional MCP View | Tools Registry View |
 | --- | --- |
-| MCP server | Skill package |
-| Tool endpoint | Skill action |
-| Server metadata | Skill manifest |
-| Docker image | Skill runtime |
-| Server list | Discoverable skill catalog |
+| MCP server | Tool package |
+| Tool endpoint | Tool action |
+| Server metadata | Tool manifest |
+| Docker image | Tool runtime |
+| Server list | Discoverable tool catalog |
 
 ---
 
 ## What is included
 
-- 58+ MCP-compatible skills
+- 58+ MCP-compatible tool packages
 - 1000+ tools across SaaS, developer tools, infrastructure, data, automation, and monitoring
 - Docker-ready runtimes
 - Workspace-based package structure
-- Skill manifest schema and validation workflow
+- Tool manifest schema and validation workflow
 
 ---
 
@@ -45,16 +45,16 @@ Build every workspace:
 npm run build
 ```
 
-Build one skill:
+Build one tool package:
 
 ```bash
-npm run build --workspace=packages/<skill-name>
+npm run build --workspace=packages/<tool-package-name>
 ```
 
-Run a built MCP skill:
+Run a built MCP tool package:
 
 ```bash
-node packages/<skill-name>/dist/index.js
+node packages/<tool-package-name>/dist/index.js
 ```
 
 ---
@@ -65,7 +65,7 @@ node packages/<skill-name>/dist/index.js
 docker run -d \
   -e SERVICE_URL="https://your-service.com" \
   -e SERVICE_API_KEY="your-api-key" \
-  agentnxt/<skill-name>
+  agentnxt/<tool-package-name>
 ```
 
 Published images are available on Docker Hub:
@@ -74,9 +74,9 @@ https://hub.docker.com/u/agentnxt
 
 ---
 
-## Skill Manifest
+## Tool Manifest
 
-Each skill should include a `skill.json` manifest:
+Each tool package should include a `tool.json` or equivalent manifest:
 
 ```json
 {
@@ -93,11 +93,11 @@ Each skill should include a `skill.json` manifest:
 
 ---
 
-## Recommended Skill Layout
+## Recommended Tool Package Layout
 
 ```text
-packages/<skill-name>/
-  skill.json
+packages/<tool-package-name>/
+  tool.json
   README.md
   Dockerfile
   src/
@@ -116,7 +116,7 @@ packages/<skill-name>/
 npm run validate
 ```
 
-The validator checks for required skill packaging files where applicable.
+The validator checks for required tool packaging files where applicable.
 
 ---
 
@@ -154,7 +154,7 @@ Please report vulnerabilities privately using the instructions in `SECURITY.md`.
 
 ## Website
 
-The marketing site lives in `website/` and can be deployed with GitHub Pages.
+The marketing site can be deployed with GitHub Pages.
 
 ---
 
