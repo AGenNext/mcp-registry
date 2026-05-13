@@ -2,7 +2,7 @@
   "name": "mcp-registry",
   "version": "1.0.0",
   "private": true,
-  "description": "The Skill Registry for MCP-compatible AI agents.",
+  "description": "The Tools Registry for MCP-compatible AI agents.",
   "packageManager": "npm@10.9.0",
   "workspaces": [
     "packages/*"
@@ -22,7 +22,7 @@
     "mcp",
     "model-context-protocol",
     "registry",
-    "skills",
+    "tools",
     "ai-agents",
     "agentnxt"
   ],
