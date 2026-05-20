@@ -4,38 +4,57 @@ Agent-Tools is the canonical tool catalog for the AGenNext platform.
 
 This is a cloud marketplace-style catalog problem.
 
-A tool is an invocable product/capability package that can be discovered, governed, versioned, permissioned, reviewed, priced, installed, and used by agents, workflows, teams, and runtimes.
+A tool is an invocable catalog object that can be discovered, governed, versioned, permissioned, reviewed, priced, installed, and used by agents, workflows, teams, and runtimes.
 
 ## Core model
 
 ```text
-Capability
-  = standardized semantic ability
-  = what can be done
-
 Tool
-  = catalog product implementing one or more capabilities
+  = primary catalog object
+  = invocable capability/product
 
-Tool Version
-  = versioned contract for a tool
-
-Provider Offer
-  = one way to access a specific tool version
-
-Provider
-  = organization, package, service, MCP server, CLI, SDK, HTTP API, or runtime endpoint offering the tool version
+Tool metadata includes:
+  - capabilities
+  - author
+  - publisher
+  - versions
+  - provider offers
+  - license
+  - pricing
+  - risk
+  - approval requirements
+  - invocation contracts
 ```
 
-The primary catalog object is the **Tool**.
+The primary catalog object is always the **Tool**.
 
-Capabilities standardize meaning. Versions standardize compatibility. Providers describe how a specific version is obtained or invoked.
+Capability, author, publisher, version, and provider are metadata attached to the tool record.
+
+## Role definitions
+
+```text
+Capability
+  = standardized semantic ability implemented by the tool
+
+Author
+  = creator or maintainer of the tool
+
+Publisher
+  = party that lists, curates, verifies, or publishes the tool into the catalog
+
+Version
+  = version metadata and compatibility contract for the tool
+
+Provider Offer
+  = one access path for a specific tool version
+
+Provider
+  = organization, package, service, MCP server, CLI, SDK, HTTP API, marketplace, or runtime endpoint offering that version
+```
 
 ## Marketplace rule
 
 ```text
-One Capability
-  can be implemented by many Tools
-
 One Tool
   can implement many Capabilities
 
@@ -48,24 +67,37 @@ One Tool Version
 One Provider
   can offer many Tools
 
+One open-source Tool
+  can have many Providers
+
 One MCP Server
   is a Provider type
 
 One MCP Server
-  can expose many Tool Versions
+  can expose many Tools
 ```
 
-## Example: capability, tool, version, providers
+## Example: tool with capability, author, publisher, version, and providers
 
 ```yaml
 id: filesystem.read_file
 type: tool
 name: Read File
+
 capabilities:
   - file.read
 
+author:
+  name: AGenNext
+  type: Organization
+
+publisher:
+  name: AGenNext
+  type: Organization
+
 versions:
   - version: 1.0.0
+    status: active
     contract:
       inputs:
         path: string
@@ -82,6 +114,9 @@ versions:
         provider_type: http_api
         protocol: https
         offer_status: active
+
+risk: medium
+approval_required: false
 ```
 
 ## Example: open-source tool with multiple providers
@@ -90,13 +125,24 @@ versions:
 id: surrealkit
 type: tool
 name: SurrealKit
+
 capabilities:
   - database.schema.generate
   - database.migration.run
   - database.seed.load
 
+author:
+  name: SurrealDB
+  type: Organization
+
+publisher:
+  name: AGenNext
+  type: Organization
+  role: catalog_curator
+
 versions:
   - version: 2.2.1
+    status: supported
     providers:
       - provider_id: surrealkit-github-release
         provider_type: github_release
@@ -121,12 +167,13 @@ Agent-Tools owns:
 ```text
 - tool catalog entries
 - capability references used by tools
-- version contracts
+- author and publisher metadata
+- version metadata and compatibility contracts
 - provider offer metadata
 - external tool definitions
 - MCP provider/package metadata where needed
 - tool invocation contracts
-- tool security, approval, and governance metadata
+- tool security, approval, pricing, and governance metadata
 ```
 
 Agent-Tools does not own:
@@ -154,7 +201,7 @@ catalog/surrealkit.tool.yaml
 
 Each file should describe a tool first.
 
-Provider details belong under the specific tool version they support.
+Capabilities, author, publisher, versions, and provider offers belong inside the tool entry as metadata.
 
 ### `packages/`
 
@@ -170,8 +217,7 @@ to:
 
 ```text
 Tool = catalog item
-Tool Version = versioned contract
-MCP server = provider offer for one or more tool versions
+MCP server = provider offer metadata under a tool version
 ```
 
 Recommended package structure:
@@ -188,7 +234,7 @@ packages/<provider-name>/
 
 ## MCP provider model
 
-An MCP server package should declare which tool versions it provides:
+An MCP server package should declare which tools it provides:
 
 ```yaml
 provider_id: filesystem-mcp-server
@@ -280,7 +326,7 @@ Migrate them in place:
 1. Identify the tools exposed by each provider package.
 2. Identify capabilities implemented by each tool.
 3. Add one .tool.yaml catalog entry per tool.
-4. Add versions under each tool.
+4. Add capability, author, publisher, and version metadata under each tool.
 5. Add provider offers under each version.
 6. Add provider.yaml only for package/build/runtime metadata.
 7. Mark tool risk, approval requirements, auth, pricing, license, and support metadata where known.
@@ -295,13 +341,13 @@ Agent-Skills
   uses tools as executable capabilities
 
 Agent-Graph
-  maps tools, capabilities, providers, versions, permissions, and invocations
+  maps tools, capabilities, authors, publishers, versions, providers, permissions, and invocations
 
 Agent-Grammar
-  validates tool, capability, version, and provider metadata
+  validates tool metadata
 
 Agent-Seed
-  seeds default platform tool/capability records
+  seeds default platform tool records
 
 Agent-Review
   reviews high-risk tools before publication/use
@@ -310,18 +356,21 @@ Agent-Review
 ## Rule
 
 ```text
-Capability
-  = semantic ability
-
 Tool
-  = catalog product implementing capabilities
+  = primary catalog object
 
-Tool Version
-  = versioned contract
+Capability
+  = semantic ability metadata
+
+Author
+  = creator/maintainer metadata
+
+Publisher
+  = catalog publishing/curation metadata
+
+Version
+  = compatibility metadata
 
 Provider Offer
-  = access path for a specific tool version
-
-MCP Server
-  = provider type, not the tool itself
+  = access path metadata for a version
 ```
